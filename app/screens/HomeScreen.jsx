@@ -6,52 +6,71 @@ import {
   FlatList,
   TouchableOpacity,
   Platform,
+  ActivityIndicator,
+  Dimensions,
 } from "react-native"
-import { StatusBar } from "expo-status-bar"
-import { Appbar, Avatar, Paragraph, Dialog, Portal } from "react-native-paper"
+import { Appbar } from "react-native-paper"
 
 import PostCard from "../components/Card"
-import { app } from "../utils/Fiirebase"
 import { useFetch } from "../hooks/useFetch"
+import { theme } from "../constants/constants"
 
 const HomeScreen = ({ navigation }) => {
   const [Data, fetchData] = useFetch()
-  // const [isWeb, setIsWeb] = useState(false)
   const sortByOptions = ["Hot", "New", "Top"]
   const [sortBy, setSortBy] = useState("hot")
-  const [count, setCount] = useState(20)
+  const [windowWidth, setWindowWidth] = useState("")
+  console.log(windowWidth)
+  // const windowHeight = Dimensions.get("window").height
 
   useEffect(() => {
-    console.log(Platform.OS)
+    // console.log(auth.currentUser)
     fetchData(sortBy)
   }, [sortBy])
 
+  useEffect(() => {
+    setWindowWidth(Dimensions.get("window").width)
+  }, [windowWidth])
+
   if (!Data) {
-    return null
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    )
   }
 
   const _handleFavorite = () => console.log("Searching")
 
   return (
     <>
-      {/* <StatusBar backgroundColor="black" /> */}
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          Platform.OS === "web"
+            ? {
+                marginHorizontal: windowWidth > 800 ? windowWidth * 0.2 : 0,
+              }
+            : "",
+        ]}
+      >
         <Appbar.Header style={styles.headerStyle}>
           <Appbar.Action icon="heart" size={30} onPress={_handleFavorite} />
           <Appbar.Action
             icon="account"
             size={30}
-            onPress={() => navigation.navigate("LogIn")}
+            onPress={() => navigation.navigate("User")}
           />
         </Appbar.Header>
+
         <FlatList
           data={sortByOptions}
           style={{
-            height: "7%",
-            paddingLeft: 20,
+            // backgroundColor: "red",
+            height: "8%",
+            paddingLeft: "10%",
             paddingBottom: 1,
             // width: "100%",
-            // backgroundColor: "red",
           }}
           horizontal={true}
           scrollEnabled
@@ -74,12 +93,13 @@ const HomeScreen = ({ navigation }) => {
 
         <FlatList
           data={Data}
+          style={{ marginTop: 10, height: "100%" }}
           keyExtractor={(item) => item.data.title}
           renderItem={(item) => (
             <PostCard
               // key={item.item.data.title}
               data={item}
-              navigation={() => navigation.navigate("Details", item.item.data)}
+              navigate={() => navigation.navigate("Details", item.item.data)}
             />
           )}
         />
@@ -89,19 +109,20 @@ const HomeScreen = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
-  active: {
-    backgroundColor: "#1de9b6",
-  },
   container: {
     flex: 1,
-    backgroundColor: "#E9F7E9",
-    paddingTop: Platform.OS === "web" ? "" : "5%",
+    backgroundColor: theme.colors.accent,
+    // marginHorizontal: Platform.OS === "web" ? "10%" : "0%",
+  },
+  styleFOrWeb: {},
+  active: {
+    backgroundColor: theme.colors.primary,
   },
   headerStyle: {
     // flex: 1,
     height: "4%",
     flexDirection: "row",
-    paddingTop: Platform.OS === "web" ? "2%" : "0%",
+    paddingTop: "2%",
     alignContent: "center",
     justifyContent: "flex-end",
   },

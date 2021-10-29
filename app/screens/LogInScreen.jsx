@@ -1,34 +1,58 @@
-import React, { useState } from "react"
-import { View, StyleSheet, Platform } from "react-native"
-import { TextInput, Button, Text } from "react-native-paper"
+import React, { useState, useContext, useEffect } from "react"
+import { View, StyleSheet, Platform, Dimensions } from "react-native"
+import { TextInput, Button, Text, HelperText } from "react-native-paper"
 
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth"
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
+
 import { app } from "../utils/Fiirebase"
+import { AuthenticatedUserContext } from "../navigation/AuthenticatedUserProvider"
+import { theme } from "../constants/constants"
 
+const auth = getAuth(app)
 const LogInScreen = ({ navigation }) => {
-  const auth = getAuth(app)
+  const { setUser } = useContext(AuthenticatedUserContext)
 
   const [email, setEmail] = useState("")
   const [pass, setPass] = useState("")
+  const [windowWidth, setWindowWidth] = useState("")
+  const [hasError, setHasError] = useState(false)
+  const [securePass, setSecurepass] = useState(true)
 
   const handleLogIn = async (email, pass) => {
-    createUserWithEmailAndPassword(auth, email, pass)
+    signInWithEmailAndPassword(auth, email, pass)
       .then((userCredential) => {
-        // Signed in
         const user = userCredential.user
-        // ...
-        console.log(user)
+        // console.log(user)
+        setUser(user)
+        navigation.navigate("Home")
       })
       .catch((error) => {
         const errorCode = error.code
         const errorMessage = error.message
-        console.log({ errorCode }, { errorMessage })
-        // ..
+        setHasError(true)
+        console.log(errorCode)
       })
   }
 
+  useEffect(() => {
+    setWindowWidth(Dimensions.get("window").width)
+  }, [windowWidth])
+
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        Platform.OS === "web"
+          ? {
+              marginHorizontal: windowWidth > 800 ? windowWidth * 0.2 : 0,
+            }
+          : "",
+      ]}
+    >
+      <Text style={{ fontSize: 20, textAlign: "center", fontWeight: "bold" }}>
+        LOGIN
+      </Text>
+
       <TextInput
         label="Email"
         style={styles.input}
@@ -36,11 +60,21 @@ const LogInScreen = ({ navigation }) => {
         onChangeText={(text) => setEmail(text)}
       />
       <TextInput
+        secureTextEntry={securePass}
         style={styles.input}
         label="Password"
         value={pass}
         onChangeText={(text) => setPass(text)}
+        right={
+          <TextInput.Icon
+            name="eye"
+            onPress={() => setSecurepass(!securePass)}
+          />
+        }
       />
+      <HelperText type="error" visible={hasError}>
+        Wrong PassWord
+      </HelperText>
       <View style={styles.bntContainer}>
         <Button
           style={styles.buttonStyle}
@@ -66,8 +100,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: "10%",
-    marginVertical: "30%",
-    // backgroundColor: "red",
+    // marginVertical: Platform.OS === "web" ? "" : "30%",
+    backgroundColor: theme.colors.accent,
     paddingTop: Platform.OS === "web" ? "" : "10%",
   },
   buttonStyle: {
@@ -81,6 +115,7 @@ const styles = StyleSheet.create({
   },
   input: {
     marginVertical: "2%",
+    borderRadius: 10,
   },
 })
 export default LogInScreen

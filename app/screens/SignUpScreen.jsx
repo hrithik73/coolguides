@@ -1,16 +1,85 @@
-import React, { useState } from "react"
-import { View, StyleSheet, Platform } from "react-native"
-import { TextInput, Button, Text } from "react-native-paper"
+import React, { useContext, useState, useEffect } from "react"
+import { View, StyleSheet, Platform, Dimensions } from "react-native"
+import { TextInput, Button, Text, HelperText } from "react-native-paper"
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  doc,
+  setDoc,
+} from "firebase/firestore"
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth"
+
+import { AuthenticatedUserContext } from "../navigation/AuthenticatedUserProvider"
+import { app } from "../utils/Fiirebase"
+import { theme } from "../constants/constants"
+
+const auth = getAuth(app)
+const db = getFirestore(app)
 
 const SignUpScreen = ({ navigation }) => {
+  const { user, setUser } = useContext(AuthenticatedUserContext)
+
   const [email, setEmail] = useState("")
   const [pass, setPass] = useState("")
   const [name, setName] = useState("")
+  const [windowWidth, setWindowWidth] = useState("")
+  const [hasErrors, setHasError] = useState(false)
+  const [securePass, setSecurepass] = useState(true)
 
-  const handleSignUp = () => {}
+  useEffect(() => {
+    setWindowWidth(Dimensions.get("window").width)
+  }, [windowWidth])
+
+  const handleSignUp = async (email, pass, name) => {
+    createUserWithEmailAndPassword(auth, email, pass)
+      .then((userCredential) => {
+        const user = userCredential.user
+        user.displayName = name
+        // user.update
+        updateProfile(auth.currentUser, {
+          displayName: name,
+        })
+          .then(() => {
+            // Profile updated!
+            // ...
+          })
+          .catch((error) => {
+            // An error occurred
+            // ...
+          })
+        setUser(user)
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code
+        const errorMessage = error.message
+        setHasError(true)
+        console.log({ errorCode }, { errorMessage })
+        // ..
+      })
+  }
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        Platform.OS === "web"
+          ? {
+              marginHorizontal: windowWidth > 800 ? windowWidth * 0.2 : 0,
+            }
+          : "",
+      ]}
+    >
+      <Text style={{ fontSize: 20, textAlign: "center", fontWeight: "bold" }}>
+        SIGNUP
+      </Text>
+
       <TextInput
         label="Name"
         style={styles.input}
@@ -23,12 +92,25 @@ const SignUpScreen = ({ navigation }) => {
         value={email}
         onChangeText={(text) => setEmail(text)}
       />
+      <HelperText type="error" visible={hasErrors}>
+        Email address is invalid!
+      </HelperText>
       <TextInput
         style={styles.input}
         label="Password"
         value={pass}
+        secureTextEntry={securePass}
+        right={
+          <TextInput.Icon
+            name="eye"
+            onPress={() => setSecurepass(!securePass)}
+          />
+        }
         onChangeText={(text) => setPass(text)}
       />
+      <HelperText type="error" visible={hasErrors}>
+        Password Must be minimun of 6 charactor
+      </HelperText>
       <View style={styles.bntContainer}>
         <Button
           style={styles.buttonStyle}
@@ -54,8 +136,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: "10%",
-    marginVertical: "30%",
-    // backgroundColor: "red",
+    marginVertical: Platform.OS === "web" ? "" : "30%",
+    backgroundColor: theme.colors.accent,
     paddingTop: Platform.OS === "web" ? "" : "10%",
   },
   buttonStyle: {

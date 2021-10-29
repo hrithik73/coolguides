@@ -1,8 +1,18 @@
-import React, { FC } from "react"
-import { View, StyleSheet } from "react-native"
+import React from "react"
+import { View, StyleSheet, TouchableOpacity } from "react-native"
 import { Avatar, Card, Title, Paragraph } from "react-native-paper"
 
-const PostCard = ({ data, navigation }) => {
+//Firebase imports
+import { getFirestore, collection, addDoc } from "firebase/firestore"
+import { getAuth } from "firebase/auth"
+
+const auth = getAuth()
+const db = getFirestore()
+
+const PostCard = ({ data, navigate }) => {
+  const title = data.item.data.title
+  const url = data.item.data.url
+
   const validateUrl = (url) => {
     var types = ["jpg", "jpeg", "tiff", "png", "gif", "bmp"]
     var parts = url.split(".")
@@ -12,24 +22,42 @@ const PostCard = ({ data, navigation }) => {
       return true
     }
   }
+
+  const addToFav = async (title, url) => {
+    try {
+      const docRef = await addDoc(collection(db, `Fav/`), {
+        title,
+        url,
+        // born: 1815,
+      })
+      console.log("Document written with ID: ", docRef.id)
+    } catch (e) {
+      console.error("Error adding document: ", e)
+    }
+  }
+
   return (
     <>
       <View style={styles.container}>
         <View style={styles.container}>
-          <Card onPress={navigation}>
+          <Card>
             <Card.Content>
-              <Title>{data.item.data.title}</Title>
+              <Title>{title}</Title>
             </Card.Content>
-            {validateUrl(data.item.data.url) && (
-              <Card.Cover
-                style={{ height: 600, resizeMode: "stretch" }}
-                source={{ uri: data.item.data.url }}
-              />
+            {validateUrl(url) && (
+              <TouchableOpacity onPress={navigate} activeOpacity={1}>
+                <Card.Cover
+                  style={{ height: 600, resizeMode: "stretch" }}
+                  source={{ uri: url }}
+                />
+              </TouchableOpacity>
             )}
-            <Card.Actions>
-              <Avatar.Icon size={30} icon="heart" />
-              <Paragraph style={{ marginLeft: 5 }}>Add to Fav</Paragraph>
-            </Card.Actions>
+            <TouchableOpacity onPress={() => addToFav(title, url)}>
+              <Card.Actions>
+                <Avatar.Icon size={30} icon="heart" />
+                <Paragraph style={{ marginLeft: 5 }}>Add to Fav</Paragraph>
+              </Card.Actions>
+            </TouchableOpacity>
           </Card>
         </View>
       </View>
@@ -39,7 +67,6 @@ const PostCard = ({ data, navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: "red",
     padding: "3%",
     margin: "1%",
   },
