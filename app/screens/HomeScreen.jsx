@@ -21,7 +21,6 @@ const HomeScreen = ({ navigation }) => {
   const [sortBy, setSortBy] = useState("hot")
   const [windowWidth, setWindowWidth] = useState("")
   console.log(windowWidth)
-  // const windowHeight = Dimensions.get("window").height
 
   useEffect(() => {
     // console.log(auth.currentUser)
@@ -55,7 +54,11 @@ const HomeScreen = ({ navigation }) => {
         ]}
       >
         <Appbar.Header style={styles.headerStyle}>
-          <Appbar.Action icon="heart" size={30} onPress={_handleFavorite} />
+          <Appbar.Action
+            icon="heart"
+            size={30}
+            onPress={() => navigation.navigate("Fav")}
+          />
           <Appbar.Action
             icon="account"
             size={30}
@@ -97,7 +100,6 @@ const HomeScreen = ({ navigation }) => {
           keyExtractor={(item) => item.data.title}
           renderItem={(item) => (
             <PostCard
-              // key={item.item.data.title}
               data={item}
               navigate={() => navigation.navigate("Details", item.item.data)}
             />
@@ -112,7 +114,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.accent,
-    // marginHorizontal: Platform.OS === "web" ? "10%" : "0%",
   },
   styleFOrWeb: {},
   active: {
@@ -134,7 +135,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 15,
-    // paddingBottom: 10,
     marginLeft: 20,
     borderRadius: 15,
     margin: 10,

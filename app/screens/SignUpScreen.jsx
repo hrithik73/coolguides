@@ -15,7 +15,7 @@ import {
   updateProfile,
 } from "firebase/auth"
 
-import { AuthenticatedUserContext } from "../navigation/AuthenticatedUserProvider"
+// import { AuthenticatedUserContext } from "../navigation/AuthenticatedUserProvider"
 import { app } from "../utils/Fiirebase"
 import { theme } from "../constants/constants"
 
@@ -23,7 +23,7 @@ const auth = getAuth(app)
 const db = getFirestore(app)
 
 const SignUpScreen = ({ navigation }) => {
-  const { user, setUser } = useContext(AuthenticatedUserContext)
+  // const { user, setUser } = useContext(AuthenticatedUserContext)
 
   const [email, setEmail] = useState("")
   const [pass, setPass] = useState("")
@@ -40,8 +40,17 @@ const SignUpScreen = ({ navigation }) => {
     createUserWithEmailAndPassword(auth, email, pass)
       .then((userCredential) => {
         const user = userCredential.user
-        user.displayName = name
-        // user.update
+
+        const userRef = doc(
+          collection(db, "Users", auth.currentUser.uid, "Details")
+        )
+
+        setDoc(userRef, {
+          name,
+          email,
+          uid: user.uid,
+        })
+
         updateProfile(auth.currentUser, {
           displayName: name,
         })
@@ -53,8 +62,6 @@ const SignUpScreen = ({ navigation }) => {
             // An error occurred
             // ...
           })
-        setUser(user)
-        // ...
       })
       .catch((error) => {
         const errorCode = error.code
@@ -102,7 +109,7 @@ const SignUpScreen = ({ navigation }) => {
         secureTextEntry={securePass}
         right={
           <TextInput.Icon
-            name="eye"
+            name={securePass ? "eye-off" : "eye"}
             onPress={() => setSecurepass(!securePass)}
           />
         }

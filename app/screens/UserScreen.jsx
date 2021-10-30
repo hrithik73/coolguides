@@ -10,7 +10,7 @@ import { theme } from "../constants/constants"
 
 const UserScreen = ({ navigation }) => {
   const { user } = useContext(AuthenticatedUserContext)
-  // console.log(user)
+  console.log(user.uid)
 
   const auth = getAuth(app)
 
@@ -49,18 +49,20 @@ const UserScreen = ({ navigation }) => {
         <Appbar.BackAction onPress={_goBack} />
       </Appbar.Header>
 
-      <View style={styles.headerContainer}>
-        <Avatar.Text size={50} label={user.displayName.charAt(0)} />
-        <Text
-          style={{
-            alignSelf: "center",
-            color: theme.colors.backdrop,
-            fontSize: 17,
-          }}
-        >
-          {user.displayName}
-        </Text>
-      </View>
+      {user.displayName && (
+        <View style={styles.headerContainer}>
+          <Avatar.Text size={50} label={user.displayName.charAt(0)} />
+          <Text
+            style={{
+              alignSelf: "center",
+              color: theme.colors.backdrop,
+              fontSize: 17,
+            }}
+          >
+            {user.displayName}
+          </Text>
+        </View>
+      )}
 
       <Button
         style={{ marginHorizontal: "20%", borderRadius: 10 }}

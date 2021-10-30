@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native"
 import { Avatar, Card, Title, Paragraph } from "react-native-paper"
 
 //Firebase imports
-import { getFirestore, collection, addDoc } from "firebase/firestore"
+import { getFirestore, doc, setDoc, collection } from "firebase/firestore"
 import { getAuth } from "firebase/auth"
 
 const auth = getAuth()
@@ -24,13 +24,16 @@ const PostCard = ({ data, navigate }) => {
   }
 
   const addToFav = async (title, url) => {
+    const userRef = doc(collection(db, "Users", auth.currentUser.uid, "Fav"))
+
     try {
-      const docRef = await addDoc(collection(db, `Fav/`), {
+      await setDoc(userRef, {
         title,
         url,
-        // born: 1815,
       })
-      console.log("Document written with ID: ", docRef.id)
+
+      // console.log(docRef)
+      console.log("Added SuKESSSFULLY")
     } catch (e) {
       console.error("Error adding document: ", e)
     }

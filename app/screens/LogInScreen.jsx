@@ -67,7 +67,7 @@ const LogInScreen = ({ navigation }) => {
         onChangeText={(text) => setPass(text)}
         right={
           <TextInput.Icon
-            name="eye"
+            name={securePass ? "eye-off" : "eye"}
             onPress={() => setSecurepass(!securePass)}
           />
         }
