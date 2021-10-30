@@ -2,15 +2,13 @@ import React, { useState, useContext, useEffect } from "react"
 import { View, StyleSheet, Platform, Dimensions } from "react-native"
 import { TextInput, Button, Text, HelperText } from "react-native-paper"
 
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
-
-import { app } from "../utils/Fiirebase"
 import { AuthenticatedUserContext } from "../navigation/AuthenticatedUserProvider"
 import { theme } from "../constants/constants"
 
-const auth = getAuth(app)
+import { auth } from "../utils/Fiirebase"
+
 const LogInScreen = ({ navigation }) => {
-  const { setUser } = useContext(AuthenticatedUserContext)
+  // const { setUser } = useContext(AuthenticatedUserContext)
 
   const [email, setEmail] = useState("")
   const [pass, setPass] = useState("")
@@ -19,19 +17,12 @@ const LogInScreen = ({ navigation }) => {
   const [securePass, setSecurepass] = useState(true)
 
   const handleLogIn = async (email, pass) => {
-    signInWithEmailAndPassword(auth, email, pass)
-      .then((userCredential) => {
-        const user = userCredential.user
-        // console.log(user)
-        setUser(user)
-        navigation.navigate("Home")
-      })
-      .catch((error) => {
-        const errorCode = error.code
-        const errorMessage = error.message
-        setHasError(true)
-        console.log(errorCode)
-      })
+    try {
+      await auth.signInWithEmailAndPassword(email, pass)
+    } catch (err) {
+      console.error(err)
+      setHasError(true)
+    }
   }
 
   useEffect(() => {
@@ -102,7 +93,8 @@ const styles = StyleSheet.create({
     padding: "10%",
     // marginVertical: Platform.OS === "web" ? "" : "30%",
     backgroundColor: theme.colors.accent,
-    paddingTop: Platform.OS === "web" ? "" : "10%",
+    // marginTop: Platform.OS === "web" ? "" : "20%",
+    paddingTop: Platform.OS === "web" ? "" : "50%",
   },
   buttonStyle: {
     alignSelf: "center",

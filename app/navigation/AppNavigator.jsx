@@ -1,15 +1,12 @@
 import React, { useContext, useEffect, useState } from "react"
 import { NavigationContainer } from "@react-navigation/native"
 import { View, ActivityIndicator } from "react-native"
-import { getAuth } from "firebase/auth"
 
-import { app } from "../utils/Fiirebase"
+import { auth } from "../utils/Fiirebase"
 import { AuthenticatedUserContext } from "./AuthenticatedUserProvider"
 import AuthNavigator from "./AuthNavigator"
 import HomeNavigator from "./HomeNavigator."
 import { theme } from "../constants/constants"
-
-const auth = getAuth(app)
 
 export default function AppNavigator() {
   const { user, setUser } = useContext(AuthenticatedUserContext)
@@ -35,7 +32,7 @@ export default function AppNavigator() {
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator color={theme.colors.primary} size="large" />
       </View>
     )
   }

@@ -4,8 +4,6 @@ import ImageViewer from "react-native-image-zoom-viewer"
 import { Button } from "react-native-paper"
 
 const PostDetail = ({ route, navigation }) => {
-  console.log(Platform)
-
   const images = [
     {
       url: route.params.url,

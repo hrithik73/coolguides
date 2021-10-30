@@ -2,25 +2,8 @@ import React, { useContext, useState, useEffect } from "react"
 import { View, StyleSheet, Platform, Dimensions } from "react-native"
 import { TextInput, Button, Text, HelperText } from "react-native-paper"
 
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  doc,
-  setDoc,
-} from "firebase/firestore"
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth"
-
-// import { AuthenticatedUserContext } from "../navigation/AuthenticatedUserProvider"
-import { app } from "../utils/Fiirebase"
+import { app, auth, db } from "../utils/Fiirebase"
 import { theme } from "../constants/constants"
-
-const auth = getAuth(app)
-const db = getFirestore(app)
 
 const SignUpScreen = ({ navigation }) => {
   // const { user, setUser } = useContext(AuthenticatedUserContext)
@@ -37,39 +20,27 @@ const SignUpScreen = ({ navigation }) => {
   }, [windowWidth])
 
   const handleSignUp = async (email, pass, name) => {
-    createUserWithEmailAndPassword(auth, email, pass)
-      .then((userCredential) => {
-        const user = userCredential.user
-
-        const userRef = doc(
-          collection(db, "Users", auth.currentUser.uid, "Details")
-        )
-
-        setDoc(userRef, {
-          name,
-          email,
+    try {
+      const res = await auth.createUserWithEmailAndPassword(email, pass)
+      const user = res.user
+      // auth.currentUser.displayName =
+      user.updateProfile({
+        displayName: name,
+      })
+      await db
+        .collection("Users")
+        .doc(auth.currentUser.uid)
+        .collection("Details")
+        .add({
           uid: user.uid,
+          name,
+          authProvider: "local",
+          email,
         })
-
-        updateProfile(auth.currentUser, {
-          displayName: name,
-        })
-          .then(() => {
-            // Profile updated!
-            // ...
-          })
-          .catch((error) => {
-            // An error occurred
-            // ...
-          })
-      })
-      .catch((error) => {
-        const errorCode = error.code
-        const errorMessage = error.message
-        setHasError(true)
-        console.log({ errorCode }, { errorMessage })
-        // ..
-      })
+    } catch (err) {
+      console.error(err)
+      alert(err.message)
+    }
   }
 
   return (
@@ -143,9 +114,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: "10%",
-    marginVertical: Platform.OS === "web" ? "" : "30%",
     backgroundColor: theme.colors.accent,
-    paddingTop: Platform.OS === "web" ? "" : "10%",
+    paddingTop: Platform.OS === "web" ? "" : "50%",
   },
   buttonStyle: {
     alignSelf: "center",

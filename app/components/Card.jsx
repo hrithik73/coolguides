@@ -1,17 +1,16 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { View, StyleSheet, TouchableOpacity } from "react-native"
 import { Avatar, Card, Title, Paragraph } from "react-native-paper"
 
-//Firebase imports
-import { getFirestore, doc, setDoc, collection } from "firebase/firestore"
-import { getAuth } from "firebase/auth"
+import { auth, db } from "../utils/Fiirebase"
 
-const auth = getAuth()
-const db = getFirestore()
-
-const PostCard = ({ data, navigate }) => {
-  const title = data.item.data.title
-  const url = data.item.data.url
+const PostCard = ({ title, url, navigate }) => {
+  // const [isAvailable, setIsAvailable] = useState(false)
+  const [newOperation, setNewOperations] = useState(false)
+  const [availableData, setAvailableData] = useState({
+    icon: "heart",
+    text: "Add to Fav",
+  })
 
   const validateUrl = (url) => {
     var types = ["jpg", "jpeg", "tiff", "png", "gif", "bmp"]
@@ -22,23 +21,70 @@ const PostCard = ({ data, navigate }) => {
       return true
     }
   }
-
   const addToFav = async (title, url) => {
-    const userRef = doc(collection(db, "Users", auth.currentUser.uid, "Fav"))
-
-    try {
-      await setDoc(userRef, {
-        title,
+    db.collection("Users")
+      .doc(auth.currentUser.uid)
+      .collection("Fav")
+      .doc(title)
+      .set({
         url,
+        title,
+        timeInterval: new Date().getTime(),
+      })
+      .then(() => {
+        setNewOperations(true)
+        console.log("Document successfully written!")
+      })
+      .catch((error) => {
+        console.error("Error writing document: ", error)
       })
 
-      // console.log(docRef)
-      console.log("Added SuKESSSFULLY")
-    } catch (e) {
-      console.error("Error adding document: ", e)
-    }
+    console.log("SucessFull")
   }
 
+  //! Checks if this post exist
+  const readData = async () => {
+    var docRef = db
+      .collection("Users")
+      .doc(auth.currentUser.uid)
+      .collection("Fav")
+      .doc(title)
+
+    docRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          // setIsAvailable(true)
+          setAvailableData({ icon: "cancel", text: "Remove from Fav" })
+        } else {
+          // doc.data() will be undefined in this case
+          console.log("No such document!")
+        }
+      })
+      .catch((error) => {
+        console.log("Error getting document:", error)
+      })
+  }
+
+  const deleteData = async (title) => {
+    db.collection("Users")
+      .doc(auth.currentUser.uid)
+      .collection("Fav")
+      .where("title", "==", title)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.docs[0].ref.delete()
+        setAvailableData({ icon: "heart", text: "Add To Fav" })
+      })
+  }
+
+  useEffect(() => {
+    readData()
+  }, [newOperation])
+
+  if (!title) {
+    return null
+  }
   return (
     <>
       <View style={styles.container}>
@@ -55,10 +101,18 @@ const PostCard = ({ data, navigate }) => {
                 />
               </TouchableOpacity>
             )}
-            <TouchableOpacity onPress={() => addToFav(title, url)}>
+            <TouchableOpacity
+              onPress={
+                availableData.icon === "heart"
+                  ? () => addToFav(title, url)
+                  : () => deleteData(title)
+              }
+            >
               <Card.Actions>
-                <Avatar.Icon size={30} icon="heart" />
-                <Paragraph style={{ marginLeft: 5 }}>Add to Fav</Paragraph>
+                <Avatar.Icon size={30} icon={availableData.icon} />
+                <Paragraph style={{ marginLeft: 5 }}>
+                  {availableData.text}
+                </Paragraph>
               </Card.Actions>
             </TouchableOpacity>
           </Card>
@@ -73,10 +127,7 @@ const styles = StyleSheet.create({
     padding: "3%",
     margin: "1%",
   },
-  containerStyle: {
-    // backgroundColor: "white",
-    // padding: 20,
-  },
+  containerStyle: {},
 })
 
 export default PostCard

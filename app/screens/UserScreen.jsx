@@ -1,76 +1,78 @@
-import { StatusBar } from "expo-status-bar"
-import React, { useContext } from "react"
-import { View, StyleSheet, Text, Platform } from "react-native"
+import React, { useContext, useState, useEffect } from "react"
+import { View, StyleSheet, Text, Platform, Dimensions } from "react-native"
 import { Avatar, Button, Appbar } from "react-native-paper"
+import { MaterialIcons } from "@expo/vector-icons"
 
-import { getAuth, onAuthStateChanged } from "firebase/auth"
-import { app } from "../utils/Fiirebase"
+import { auth } from "../utils/Fiirebase"
+
 import { AuthenticatedUserContext } from "../navigation/AuthenticatedUserProvider"
 import { theme } from "../constants/constants"
 
 const UserScreen = ({ navigation }) => {
   const { user } = useContext(AuthenticatedUserContext)
-  console.log(user.uid)
+  // console.log(user.uid)
+  const [windowWidth, setWindowWidth] = useState("")
 
-  const auth = getAuth(app)
-
-  // onAuthStateChanged(auth, (user) => {
-  //   if (user) {
-  //     // User is signed in, see docs for a list of available properties
-  //     // https://firebase.google.com/docs/reference/js/firebase.User
-  //     const uid = user.uid
-  //     // ...
-  //   } else {
-  //     // User is signed out
-  //     // ...
-  //   }
-  // })
+  useEffect(() => {
+    setWindowWidth(Dimensions.get("window").width)
+  }, [windowWidth])
 
   const _goBack = () => {
-    navigation.navigate("Home")
+    navigation.navigate("HomeScreen")
   }
-
-  const _handleSearch = () => console.log("Searching")
-
-  const _handleMore = () => console.log("Shown more")
 
   const handleLogOut = () => {
     auth.signOut()
   }
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        Platform.OS === "web"
+          ? {
+              marginHorizontal: windowWidth > 800 ? windowWidth * 0.2 : 0,
+            }
+          : "",
+      ]}
+    >
       <Appbar.Header
-        style={{
-          height: "4%",
-          paddingTop: "2%",
-        }}
+      // style={{
+      //   height: "4%",
+      //   paddingTop: "2%",
+      // }}
       >
         <Appbar.BackAction onPress={_goBack} />
       </Appbar.Header>
 
-      {user.displayName && (
-        <View style={styles.headerContainer}>
-          <Avatar.Text size={50} label={user.displayName.charAt(0)} />
-          <Text
-            style={{
-              alignSelf: "center",
-              color: theme.colors.backdrop,
-              fontSize: 17,
-            }}
-          >
-            {user.displayName}
-          </Text>
-        </View>
-      )}
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        {user.displayName && (
+          <View style={styles.headerContainer}>
+            <Avatar.Text size={50} label={user.displayName.charAt(0)} />
+            <Text
+              style={{
+                alignSelf: "center",
+                color: theme.colors.backdrop,
+                fontSize: 17,
+              }}
+            >
+              {user.displayName}
+            </Text>
+            <Text style={styles.mail}>
+              <MaterialIcons name="email" size={16} color="black" />{" "}
+              {user.email}
+            </Text>
+          </View>
+        )}
 
-      <Button
-        style={{ marginHorizontal: "20%", borderRadius: 10 }}
-        mode="contained"
-        onPress={handleLogOut}
-      >
-        Sign Out
-      </Button>
+        <Button
+          style={{ marginHorizontal: "30%", borderRadius: 10 }}
+          mode="contained"
+          onPress={handleLogOut}
+        >
+          Sign Out
+        </Button>
+      </View>
     </View>
   )
 }
@@ -81,11 +83,15 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.accent,
   },
   headerContainer: {
-    // flex: 1,
     height: "20%",
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
+  },
+  mail: {
+    backgroundColor: theme.colors.background,
+    justifyContent: "center",
+    fontSize: 16,
   },
 })
 export default UserScreen

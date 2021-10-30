@@ -16,11 +16,10 @@ import { useFetch } from "../hooks/useFetch"
 import { theme } from "../constants/constants"
 
 const HomeScreen = ({ navigation }) => {
-  const [Data, fetchData] = useFetch()
+  const [Data, isLoading, fetchData] = useFetch()
   const sortByOptions = ["Hot", "New", "Top"]
   const [sortBy, setSortBy] = useState("hot")
   const [windowWidth, setWindowWidth] = useState("")
-  console.log(windowWidth)
 
   useEffect(() => {
     // console.log(auth.currentUser)
@@ -30,16 +29,6 @@ const HomeScreen = ({ navigation }) => {
   useEffect(() => {
     setWindowWidth(Dimensions.get("window").width)
   }, [windowWidth])
-
-  if (!Data) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    )
-  }
-
-  const _handleFavorite = () => console.log("Searching")
 
   return (
     <>
@@ -69,7 +58,7 @@ const HomeScreen = ({ navigation }) => {
         <FlatList
           data={sortByOptions}
           style={{
-            // backgroundColor: "red",
+            // backgroundColor: "blue",
             height: "8%",
             paddingLeft: "10%",
             paddingBottom: 1,
@@ -94,17 +83,26 @@ const HomeScreen = ({ navigation }) => {
           }}
         />
 
-        <FlatList
-          data={Data}
-          style={{ marginTop: 10, height: "100%" }}
-          keyExtractor={(item) => item.data.title}
-          renderItem={(item) => (
-            <PostCard
-              data={item}
-              navigate={() => navigation.navigate("Details", item.item.data)}
-            />
-          )}
-        />
+        {!isLoading ? (
+          <FlatList
+            data={Data}
+            style={{ marginTop: 10, height: "100%" }}
+            keyExtractor={(item) => item.data.title}
+            renderItem={(item) => (
+              <PostCard
+                title={item.item.data.title}
+                url={item.item.data.url}
+                navigate={() => navigation.navigate("Details", item.item.data)}
+              />
+            )}
+          />
+        ) : (
+          <ActivityIndicator
+            size="large"
+            style={{ position: "absolute", top: "15%", left: "40%" }}
+            color={theme.colors.primary}
+          />
+        )}
       </View>
     </>
   )
@@ -115,13 +113,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.accent,
   },
-  styleFOrWeb: {},
   active: {
     backgroundColor: theme.colors.primary,
   },
   headerStyle: {
     // flex: 1,
-    height: "4%",
+    // height: "4%",
     flexDirection: "row",
     paddingTop: "2%",
     alignContent: "center",

@@ -1,26 +1,47 @@
 import * as React from "react"
-import { createNativeStackNavigator } from "@react-navigation/native-stack"
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
+import { AntDesign } from "@expo/vector-icons"
+import { Dimensions, Platform } from "react-native"
 
-import HomeScreen from "../screens/HomeScreen"
-import PostCard from "../components/Card"
-import PostDetail from "../screens/PostDetail"
+import StackNavigator from "./StackNavigator"
 import UserScreen from "../screens/UserScreen"
 import FavScreen from "../screens/FavScreen"
+import { theme } from "../constants/constants"
 
-const Stack = createNativeStackNavigator()
+const Tab = createBottomTabNavigator()
 
 const HomeNavigator = () => {
   return (
-    <Stack.Navigator
-      initialRouteName="Home"
-      screenOptions={{ headerShown: false }}
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarInactiveBackgroundColor: theme.colors.accent,
+        tabBarActiveBackgroundColor: theme.colors.primary,
+        tabBarStyle: {
+          paddingHorizontal: Dimensions.get("window").width > 800 ? "20%" : 0,
+          borderTopWidth: 0,
+          elevation: 0,
+        },
+      }}
     >
-      <Stack.Screen component={HomeScreen} name="Home" />
-      <Stack.Screen component={PostCard} name="Card" />
-      <Stack.Screen component={PostDetail} name="Details" />
-      <Stack.Screen component={UserScreen} name="User" />
-      <Stack.Screen component={FavScreen} name="Fav" />
-    </Stack.Navigator>
+      <Tab.Screen
+        name="Home"
+        component={StackNavigator}
+        options={{ tabBarIcon: () => <AntDesign name="home" size={24} /> }}
+      />
+      <Tab.Screen
+        name="Fav"
+        component={FavScreen}
+        options={{ tabBarIcon: () => <AntDesign name="heart" size={24} /> }}
+      />
+      <Tab.Screen
+        name="User"
+        component={UserScreen}
+        options={{
+          tabBarIcon: () => <AntDesign name="user" size={24} />,
+        }}
+      />
+    </Tab.Navigator>
   )
 }
 export default HomeNavigator

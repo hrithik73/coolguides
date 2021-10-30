@@ -1,8 +1,59 @@
-import React from "react"
-import { View, StyleSheet, Text } from "react-native"
+import React, { useEffect, useState } from "react"
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
+  Platform,
+  Dimensions,
+} from "react-native"
 import { theme } from "../constants/constants"
+import { Appbar } from "react-native-paper"
 
-const FavScreen = () => {
+import PostCard from "../components/Card"
+
+import { auth, db } from "../utils/Fiirebase"
+
+const FavScreen = ({ navigation }) => {
+  const [Data, setData] = useState([])
+  const [windowWidth, setWindowWidth] = useState()
+  // console.log(Data)
+
+  const getData = async () => {
+    db.collection("Users")
+      .doc(auth.currentUser.uid)
+      .collection("Fav")
+      .orderBy("timeInterval")
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data())
+        })
+
+        const tempDoc = querySnapshot.docs.map((doc) => {
+          return { id: doc.id, ...doc.data() }
+        })
+        setData(tempDoc)
+      })
+  }
+
+  useEffect(() => {
+    getData()
+  }, [])
+
+  useEffect(() => {
+    setWindowWidth(Dimensions.get("window").width)
+  }, [windowWidth])
+
+  if (!Data) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
+
   return (
     <View
       style={[
@@ -15,11 +66,7 @@ const FavScreen = () => {
       ]}
     >
       <Appbar.Header style={styles.headerStyle}>
-        <Appbar.Action
-          icon="heart"
-          size={30}
-          onPress={() => navigation.navigate("Fav")}
-        />
+        <Appbar.BackAction onPress={() => navigation.navigate("HomeScreen")} />
         <Appbar.Action
           icon="account"
           size={30}
@@ -27,45 +74,26 @@ const FavScreen = () => {
         />
       </Appbar.Header>
 
-      <FlatList
-        data={sortByOptions}
-        style={{
-          // backgroundColor: "red",
-          height: "8%",
-          paddingLeft: "10%",
-          paddingBottom: 1,
-          // width: "100%",
-        }}
-        horizontal={true}
-        scrollEnabled
-        keyExtractor={(item) => item}
-        renderItem={({ item }) => {
-          return (
-            <TouchableOpacity
-              style={
-                item.toLowerCase() === sortBy
-                  ? [styles.sortby, styles.active]
-                  : styles.sortby
-              }
-              onPress={() => setSortBy(item.toLowerCase())}
-            >
-              <Text style={styles.sortbyFont}>{item}</Text>
-            </TouchableOpacity>
-          )
-        }}
-      />
-
-      <FlatList
-        data={Data}
-        style={{ marginTop: 10, height: "100%" }}
-        keyExtractor={(item) => item.data.title}
-        renderItem={(item) => (
-          <PostCard
-            data={item}
-            navigate={() => navigation.navigate("Details", item.item.data)}
-          />
-        )}
-      />
+      {!Data ? (
+        <ActivityIndicator
+          size="large"
+          style={{ position: "absolute", top: "15%", left: "40%" }}
+          color={theme.colors.primary}
+        />
+      ) : (
+        <FlatList
+          data={Data}
+          style={{ marginTop: 10, height: "100%" }}
+          keyExtractor={(item) => item.title}
+          renderItem={(item) => (
+            <PostCard
+              title={item.item.title}
+              url={item.item.url}
+              navigate={() => navigation.navigate("Details", item.item)}
+            />
+          )}
+        />
+      )}
     </View>
   )
 }
@@ -75,17 +103,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.accent,
   },
-  styleFOrWeb: {},
   active: {
     backgroundColor: theme.colors.primary,
   },
   headerStyle: {
-    // flex: 1,
-    height: "4%",
-    flexDirection: "row",
-    paddingTop: "2%",
-    alignContent: "center",
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
   },
   sortby: {
     flex: 1,
