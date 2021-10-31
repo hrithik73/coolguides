@@ -5,7 +5,9 @@ import { Avatar, Card, Title, Paragraph } from "react-native-paper"
 import { auth, db } from "../utils/Fiirebase"
 
 const PostCard = ({ title, url, navigate }) => {
-  // const [isAvailable, setIsAvailable] = useState(false)
+  // removing any / from title because title is used as id
+  // So whenever there is any / in the title firebase think of it as a two layer data
+  title = title.replaceAll("/", " ")
   const [newOperation, setNewOperations] = useState(false)
   const [availableData, setAvailableData] = useState({
     icon: "heart",

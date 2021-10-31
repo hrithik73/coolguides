@@ -36,12 +36,7 @@ const UserScreen = ({ navigation }) => {
           : "",
       ]}
     >
-      <Appbar.Header
-      // style={{
-      //   height: "4%",
-      //   paddingTop: "2%",
-      // }}
-      >
+      <Appbar.Header>
         <Appbar.BackAction onPress={_goBack} />
       </Appbar.Header>
 

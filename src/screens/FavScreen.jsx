@@ -26,11 +26,6 @@ const FavScreen = ({ navigation }) => {
       .orderBy("timeInterval")
       .get()
       .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data())
-        })
-
         const tempDoc = querySnapshot.docs.map((doc) => {
           return { id: doc.id, ...doc.data() }
         })
