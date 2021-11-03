@@ -1,3 +1,1 @@
-# CoolGuides for Anything and Everything :note:
-
-### Built Wit
+# CoolGuides for Anything and Everything
