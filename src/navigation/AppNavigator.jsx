@@ -8,10 +8,20 @@ import AuthNavigator from "./AuthNavigator"
 import HomeNavigator from "./HomeNavigator."
 import { theme } from "../constants/constants"
 
+import * as Linking from "expo-linking"
+
+// Linking.createURL is available as of expo@40.0.1 and expo-linking@2.0.1. If
+// you are using older versions, you can upgrade or use Linking.makeUrl instead,
+// but note that your deep links in standalone apps will be in the format
+// scheme:/// rather than scheme:// if you use makeUrl.
+const prefix = Linking.createURL("/")
+
 export default function AppNavigator() {
   const { user, setUser } = useContext(AuthenticatedUserContext)
   const [isLoading, setIsLoading] = useState(true)
-
+  const linking = {
+    prefixes: [prefix],
+  }
   useEffect(() => {
     // onAuthStateChanged returns an unsubscriber
     const unsubscribeAuth = auth.onAuthStateChanged(
@@ -38,7 +48,7 @@ export default function AppNavigator() {
   }
 
   return (
-    <NavigationContainer theme={theme}>
+    <NavigationContainer theme={theme} linking={linking}>
       {user ? <HomeNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   )

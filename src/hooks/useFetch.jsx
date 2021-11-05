@@ -8,12 +8,10 @@ export const useFetch = () => {
 
   const fetchData = (sortBy) => {
     setIsLoading(true)
-    // const count = 100
-    fetch(`${url}/${sortBy}.json?limit=10`)
+    fetch(`${url}/${sortBy}.json?limit=100`)
       .then((x) => x.json())
       .then((y) => {
         setData(y.data.children)
-
         setIsLoading(false)
       })
       .catch((e) => {

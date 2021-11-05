@@ -1,8 +1,8 @@
-import React, { useContext, useState, useEffect } from "react"
 import { View, StyleSheet, Platform, Dimensions } from "react-native"
+import React, { useContext, useState, useEffect } from "react"
 import { TextInput, Button, Text, HelperText } from "react-native-paper"
 
-import { app, auth, db } from "../utils/Fiirebase"
+import {  auth, db } from "../utils/Fiirebase"
 import { theme } from "../constants/constants"
 
 const SignUpScreen = ({ navigation }) => {
