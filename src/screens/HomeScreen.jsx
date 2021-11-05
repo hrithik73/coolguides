@@ -75,7 +75,7 @@ const HomeScreen = ({ navigation }) => {
                     ? [styles.sortby, styles.active]
                     : styles.sortby
                 }
-                onPress={() => setSortBy(item.toLowerCase())}
+                onPress={(item) => setSortBy(item.toLowerCase())}
               >
                 <Text style={styles.sortbyFont}>{item}</Text>
               </TouchableOpacity>

@@ -1,11 +1,12 @@
-import * as React from "react"
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper"
+import * as React from "react"
+import { Platform} from "react-native"
 
 import { theme } from "./src/constants/constants"
 import Routes from "./src/navigation"
 import * as serviceWorkerRegistration from "./src/serviceWorkerRegistration"
 
-const App = () => {
+export default function App() {
   return (
     <PaperProvider theme={theme}>
       <Routes />
@@ -13,5 +14,7 @@ const App = () => {
   )
 }
 
-export default App
+if(Platform.OS==="web"){
 serviceWorkerRegistration.register()
+}
+
