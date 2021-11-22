@@ -3,7 +3,7 @@ import { View, StyleSheet, Platform, Dimensions } from "react-native"
 import { TextInput, Button, Text, HelperText } from "react-native-paper"
 
 import { AuthenticatedUserContext } from "../navigation/AuthenticatedUserProvider"
-import { theme } from "../constants/constants"
+import { theme } from "../config/constants"
 
 import { auth } from "../utils/Fiirebase"
 

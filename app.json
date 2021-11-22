@@ -18,12 +18,32 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.hrithik.coolguides",
+      "buildType": "apk",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/logo.png",
         "backgroundColor": "#000"
       }
     },
-    "web": {
+"build": {
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "preview2": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      }
+    },
+    "preview3": {
+      "developmentClient": true
+    },
+    "production": {}
+  },
+
+"web": {
       "favicon": "./src/assets/logo.png"
     }
   }

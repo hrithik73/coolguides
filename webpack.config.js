@@ -6,7 +6,6 @@ module.exports = async function (env, argv) {
   // Set by expo-cli during `expo build:web`
   const isEnvProduction = env.mode === "production";
 
-  // Create the default config
   const config = await createExpoWebpackConfigAsync(env, argv);
 
   if (isEnvProduction) {

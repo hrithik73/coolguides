@@ -6,7 +6,7 @@ import { MaterialIcons } from "@expo/vector-icons"
 import { auth } from "../utils/Fiirebase"
 
 import { AuthenticatedUserContext } from "../navigation/AuthenticatedUserProvider"
-import { theme } from "../constants/constants"
+import { theme } from "../config/constants"
 
 const UserScreen = ({ navigation }) => {
   const { user } = useContext(AuthenticatedUserContext)

@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-
 const url = `https://www.reddit.com/r/coolguides`
 
 export const useFetch = () => {

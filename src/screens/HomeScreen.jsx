@@ -13,7 +13,7 @@ import { Appbar } from "react-native-paper"
 
 import PostCard from "../components/Card"
 import { useFetch } from "../hooks/useFetch"
-import { theme } from "../constants/constants"
+import { theme } from "../config/constants"
 
 const HomeScreen = ({ navigation }) => {
   const [Data, isLoading, fetchData] = useFetch()
@@ -38,6 +38,7 @@ const HomeScreen = ({ navigation }) => {
           Platform.OS === "web"
             ? {
                 marginHorizontal: windowWidth > 800 ? windowWidth * 0.2 : 0,
+                backgroundColor: theme.colors.accent,
               }
             : "",
         ]}
@@ -59,10 +60,10 @@ const HomeScreen = ({ navigation }) => {
           data={sortByOptions}
           style={{
             // backgroundColor: "blue",
+            // width: "100%",
             height: "8%",
             paddingLeft: "10%",
             paddingBottom: 1,
-            // width: "100%",
           }}
           horizontal={true}
           scrollEnabled
@@ -75,7 +76,7 @@ const HomeScreen = ({ navigation }) => {
                     ? [styles.sortby, styles.active]
                     : styles.sortby
                 }
-                onPress={(item) => setSortBy(item.toLowerCase())}
+                onPress={() => setSortBy(item.toLowerCase())}
               >
                 <Text style={styles.sortbyFont}>{item}</Text>
               </TouchableOpacity>

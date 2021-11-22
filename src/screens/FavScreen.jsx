@@ -7,7 +7,7 @@ import {
   Platform,
   Dimensions,
 } from "react-native"
-import { theme } from "../constants/constants"
+import { theme } from "../config/constants"
 import { Appbar } from "react-native-paper"
 
 import PostCard from "../components/Card"

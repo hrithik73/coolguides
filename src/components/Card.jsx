@@ -88,39 +88,35 @@ const PostCard = ({ title, url, navigate }) => {
     return null
   }
   return (
-    <>
-      <View style={styles.container}>
-        <View style={styles.container}>
-          <Card>
-            <Card.Content>
-              <Title>{title}</Title>
-            </Card.Content>
-            {validateUrl(url) && (
-              <TouchableOpacity onPress={navigate} activeOpacity={1}>
-                <Card.Cover
-                  style={{ height: 600, resizeMode: "stretch" }}
-                  source={{ uri: url }}
-                />
-              </TouchableOpacity>
-            )}
-            <TouchableOpacity
-              onPress={
-                availableData.icon === "heart"
-                  ? () => addToFav(title, url)
-                  : () => deleteData(title)
-              }
-            >
-              <Card.Actions>
-                <Avatar.Icon size={30} icon={availableData.icon} />
-                <Paragraph style={{ marginLeft: 5 }}>
-                  {availableData.text}
-                </Paragraph>
-              </Card.Actions>
-            </TouchableOpacity>
-          </Card>
-        </View>
-      </View>
-    </>
+    <View style={styles.container}>
+      <Card>
+        <Card.Content>
+          <Title>{title}</Title>
+        </Card.Content>
+        {validateUrl(url) && (
+          <TouchableOpacity onPress={navigate} activeOpacity={1}>
+            <Card.Cover
+              style={{ height: 800, resizeMode: "stretch" }}
+              source={{ uri: url }}
+            />
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity
+          onPress={
+            availableData.icon === "heart"
+              ? () => addToFav(title, url)
+              : () => deleteData(title)
+          }
+        >
+          <Card.Actions>
+            <Avatar.Icon size={30} icon={availableData.icon} />
+            <Paragraph style={{ marginLeft: 5 }}>
+              {availableData.text}
+            </Paragraph>
+          </Card.Actions>
+        </TouchableOpacity>
+      </Card>
+    </View>
   )
 }
 

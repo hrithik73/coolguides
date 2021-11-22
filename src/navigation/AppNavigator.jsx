@@ -6,14 +6,10 @@ import { auth } from "../utils/Fiirebase"
 import { AuthenticatedUserContext } from "./AuthenticatedUserProvider"
 import AuthNavigator from "./AuthNavigator"
 import HomeNavigator from "./HomeNavigator."
-import { theme } from "../constants/constants"
+import { theme } from "../config/constants"
 
 import * as Linking from "expo-linking"
 
-// Linking.createURL is available as of expo@40.0.1 and expo-linking@2.0.1. If
-// you are using older versions, you can upgrade or use Linking.makeUrl instead,
-// but note that your deep links in standalone apps will be in the format
-// scheme:/// rather than scheme:// if you use makeUrl.
 const prefix = Linking.createURL("/")
 
 export default function AppNavigator() {

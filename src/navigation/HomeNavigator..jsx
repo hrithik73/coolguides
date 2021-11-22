@@ -6,7 +6,7 @@ import { Dimensions, Platform } from "react-native"
 import StackNavigator from "./StackNavigator"
 import UserScreen from "../screens/UserScreen"
 import FavScreen from "../screens/FavScreen"
-import { theme } from "../constants/constants"
+import { theme } from "../config/constants"
 
 const Tab = createBottomTabNavigator()
 
