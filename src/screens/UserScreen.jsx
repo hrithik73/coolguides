@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react"
 import { View, StyleSheet, Text, Platform, Dimensions } from "react-native"
 import { Avatar, Button, Appbar } from "react-native-paper"
-import { MaterialIcons } from "@expo/vector-icons"
+import { MaterialIcons, AntDesign } from "@expo/vector-icons"
 
 import { auth } from "../utils/Fiirebase"
 
@@ -54,7 +54,14 @@ const UserScreen = ({ navigation }) => {
               {user.displayName}
             </Text>
             <Text style={styles.mail}>
-              <MaterialIcons name="email" size={16} color="black" />{" "}
+              <AntDesign
+                style={{
+                  marginRight: 5,
+                }}
+                name="mail"
+                size={16}
+                color="black"
+              />
               {user.email}
             </Text>
           </View>
@@ -84,9 +91,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   mail: {
-    backgroundColor: theme.colors.background,
-    justifyContent: "center",
-    fontSize: 16,
+    // backgroundColor: theme.colors.backdrop,
+    // justifyContent: "center",
+    // alignItems: "center",
+    // fontSize: 16,
   },
 })
 export default UserScreen

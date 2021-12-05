@@ -2,14 +2,12 @@ import React, { useState, useContext, useEffect } from "react"
 import { View, StyleSheet, Platform, Dimensions } from "react-native"
 import { TextInput, Button, Text, HelperText } from "react-native-paper"
 
-import { AuthenticatedUserContext } from "../navigation/AuthenticatedUserProvider"
+// import { AuthenticatedUserContext } from "../navigation/AuthenticatedUserProvider"
 import { theme } from "../config/constants"
 
 import { auth } from "../utils/Fiirebase"
 
 const LogInScreen = ({ navigation }) => {
-  // const { setUser } = useContext(AuthenticatedUserContext)
-
   const [email, setEmail] = useState("")
   const [pass, setPass] = useState("")
   const [windowWidth, setWindowWidth] = useState("")
