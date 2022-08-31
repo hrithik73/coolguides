@@ -1,5 +1,4 @@
 node_modules/
-.expo-shared/
 .expo/
 dist/
 npm-debug.*
@@ -13,4 +12,3 @@ web-build/
 
 # macOS
 .DS_Store
-.env
