@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -6,92 +6,83 @@ import {
   ActivityIndicator,
   Platform,
   Dimensions,
-} from "react-native"
-import { theme } from "../config/constants"
-import { Appbar } from "react-native-paper"
+} from 'react-native';
+import { PaperTheme as theme } from '../config/constants';
+import { Appbar } from 'react-native-paper';
 
-import PostCard from "../components/Card"
+import PostCard from '../components/Card';
 
-import { auth, db } from "../utils/Fiirebase"
+import { auth, db } from '../utils/Fiirebase';
 
 const FavScreen = ({ navigation }) => {
-  const [Data, setData] = useState([])
-  const [windowWidth, setWindowWidth] = useState()
+  const [Data, setData] = useState([]);
+  const [windowWidth, setWindowWidth] = useState();
   // console.log(Data)
 
   const getData = async () => {
-    db.collection("Users")
+    db.collection('Users')
       .doc(auth.currentUser.uid)
-      .collection("Fav")
-      .orderBy("timeInterval")
+      .collection('Fav')
+      .orderBy('timeInterval')
       .get()
       .then((querySnapshot) => {
         const tempDoc = querySnapshot.docs.map((doc) => {
-          return { id: doc.id, ...doc.data() }
-        })
-        setData(tempDoc)
-      })
-  }
+          return { id: doc.id, ...doc.data() };
+        });
+        setData(tempDoc);
+      });
+  };
 
   useEffect(() => {
-    getData()
-  }, [])
+    getData();
+  }, []);
 
   useEffect(() => {
-    setWindowWidth(Dimensions.get("window").width)
-  }, [windowWidth])
+    setWindowWidth(Dimensions.get('window').width);
+  }, [windowWidth]);
 
   if (!Data) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size='large' />
       </View>
-    )
+    );
   }
 
   return (
-    <View
-      style={[
-        styles.container,
-        Platform.OS === "web"
-          ? {
-              marginHorizontal: windowWidth > 800 ? windowWidth * 0.2 : 0,
-            }
-          : "",
-      ]}
-    >
+    <View style={styles.container}>
       <Appbar.Header style={styles.headerStyle}>
-        <Appbar.BackAction onPress={() => navigation.navigate("HomeScreen")} />
+        <Appbar.BackAction onPress={() => navigation.navigate('HomeScreen')} />
         <Appbar.Action
-          icon="account"
+          icon='account'
           size={30}
-          onPress={() => navigation.navigate("User")}
+          onPress={() => navigation.navigate('User')}
         />
       </Appbar.Header>
 
       {!Data ? (
         <ActivityIndicator
-          size="large"
-          style={{ position: "absolute", top: "15%", left: "40%" }}
+          size='large'
+          style={{ position: 'absolute', top: '15%', left: '40%' }}
           color={theme.colors.primary}
         />
       ) : (
         <FlatList
           data={Data}
-          style={{ marginTop: 10, height: "100%" }}
+          style={{ marginTop: 10, height: '100%' }}
           keyExtractor={(item) => item.title}
           renderItem={(item) => (
             <PostCard
               title={item.item.title}
               url={item.item.url}
-              navigate={() => navigation.navigate("Details", item.item)}
+              navigate={() => navigation.navigate('Details', item.item)}
             />
           )}
         />
       )}
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -102,15 +93,15 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
   },
   headerStyle: {
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
   sortby: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     height: 30,
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 15,
     marginLeft: 20,
     borderRadius: 15,
@@ -118,7 +109,7 @@ const styles = StyleSheet.create({
   },
   sortbyFont: {
     fontSize: 17,
-    fontWeight: "700",
+    fontWeight: '700',
   },
-})
-export default FavScreen
+});
+export default FavScreen;

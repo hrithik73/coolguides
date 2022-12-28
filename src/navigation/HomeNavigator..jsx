@@ -1,47 +1,49 @@
-import * as React from "react"
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-import { AntDesign } from "@expo/vector-icons"
-import { Dimensions, Platform } from "react-native"
+import * as React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { AntDesign } from '@expo/vector-icons';
+import { Dimensions, Platform } from 'react-native';
 
-import StackNavigator from "./StackNavigator"
-import UserScreen from "../screens/UserScreen"
-import FavScreen from "../screens/FavScreen"
-import { theme } from "../config/constants"
+import StackNavigator from './StackNavigator';
+import UserScreen from '../screens/UserScreen';
+import FavScreen from '../screens/FavScreen';
+import { NavigationTheme } from '../config/constants';
 
-const Tab = createBottomTabNavigator()
+const Tab = createBottomTabNavigator();
 
 const HomeNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarInactiveBackgroundColor: theme.colors.accent,
-        tabBarActiveBackgroundColor: theme.colors.primary,
         tabBarStyle: {
-          paddingHorizontal: Dimensions.get("window").width > 800 ? "20%" : 0,
+          paddingHorizontal: Dimensions.get('window').width > 800 ? '20%' : 0,
           borderTopWidth: 0,
           elevation: 0,
         },
       }}
     >
       <Tab.Screen
-        name="Home"
+        name='Home'
         component={StackNavigator}
-        options={{ tabBarIcon: () => <AntDesign name="home" size={24} /> }}
+        options={{
+          tabBarIcon: (props) => <AntDesign name='home' {...props} />,
+        }}
       />
       <Tab.Screen
-        name="Fav"
+        name='Fav'
         component={FavScreen}
-        options={{ tabBarIcon: () => <AntDesign name="heart" size={24} /> }}
+        options={{
+          tabBarIcon: (props) => <AntDesign name='heart' {...props} />,
+        }}
       />
       <Tab.Screen
-        name="User"
+        name='User'
         component={UserScreen}
         options={{
-          tabBarIcon: () => <AntDesign name="user" size={24} />,
+          tabBarIcon: (props) => <AntDesign name='user' {...props} />,
         }}
       />
     </Tab.Navigator>
-  )
-}
-export default HomeNavigator
+  );
+};
+export default HomeNavigator;
